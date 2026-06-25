@@ -1,0 +1,17 @@
+{
+  "worktreeDir": ".worktrees",
+  "metaDir": ".agent-workspace",
+  "branchPrefix": "agent/",
+  "base": "main",
+  "copyFiles": [".env"],
+  "install": "pnpm install --frozen-lockfile",
+  "dev": {
+    "command": "pnpm dev",
+    "urlTemplate": "http://{slug}.localhost:{port}"
+  },
+  "hooks": {
+    "setup": "node scripts/workspace-setup.mjs",
+    "seed": "node scripts/workspace-seed.mjs",
+    "preCleanup": "node scripts/workspace-cleanup.mjs"
+  }
+}

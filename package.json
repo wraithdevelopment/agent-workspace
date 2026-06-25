@@ -1,0 +1,23 @@
+{
+  "name": "@wraithdevelopment/agent-workspace",
+  "version": "0.1.0",
+  "description": "Generic git-worktree CLI for coding-agent workspaces.",
+  "type": "module",
+  "bin": {
+    "agent-wt": "./bin/agent-wt.mjs",
+    "wt": "./bin/agent-wt.mjs"
+  },
+  "files": [
+    "bin",
+    "agent-workspace.example.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}
