@@ -151,6 +151,11 @@ function slugify(value) {
     .slice(0, 60);
 }
 
+function expectAtMost(cli, count) {
+  if (cli.positionals.length > count)
+    throw new Error(`${cli.command} accepts at most ${count} argument${count === 1 ? "" : "s"}.`);
+}
+
 // ── config ─────────────────────────────────────────────────────────────────────
 function validateConfig(raw, path) {
   if (typeof raw !== "object" || raw === null || Array.isArray(raw))
@@ -567,6 +572,7 @@ async function main() {
       await createWorktree(repo, cli.positionals.join(" "), cli.flags);
       break;
     case "setup": {
+      expectAtMost(cli, 1);
       const worktreePath = findWorktree(repo, cli.positionals[0]);
       const branch = run("git", ["-C", worktreePath, "branch", "--show-current"], { capture: true });
       await setupWorktree(
@@ -579,13 +585,16 @@ async function main() {
     case "list":
     case "ls":
     case "status":
+      expectAtMost(cli, 0);
       listStatus(repo);
       break;
     case "start":
     case "dev":
+      expectAtMost(cli, 1);
       startDev(repo, findWorktree(repo, cli.positionals[0]));
       break;
     case "stop":
+      expectAtMost(cli, 1);
       if (cli.positionals[0] === "all") {
         for (const entry of parseWorktreeList(repo.sourceRoot))
           if (entry.path.startsWith(repo.worktreeRoot)) stopDev(repo, entry.path);
@@ -594,10 +603,12 @@ async function main() {
       }
       break;
     case "seed":
+      expectAtMost(cli, 1);
       seed(repo, findWorktree(repo, cli.positionals[0]));
       break;
     case "cleanup":
     case "rm":
+      expectAtMost(cli, 1);
       cleanup(repo, findWorktree(repo, cli.positionals[0]), cli.flags);
       break;
     default:

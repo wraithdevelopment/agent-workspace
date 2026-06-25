@@ -37,6 +37,10 @@ test("creates, lists, and force-cleans a generic worktree", () => {
       () => run(process.execPath, [cli, "cleanup", "test-task", "--force=false"], dir),
       /--force does not take a value/,
     );
+    assert.throws(
+      () => run(process.execPath, [cli, "cleanup", "test-task", "--force", "false"], dir),
+      /cleanup accepts at most 1 argument/,
+    );
 
     run(process.execPath, [cli, "cleanup", "--force", "test-task"], dir);
     assert.equal(existsSync(worktreePath), false);
