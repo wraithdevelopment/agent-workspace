@@ -93,6 +93,8 @@ function parseCli(argv) {
     }
     const [rawKey, rawValue] = token.slice(2).split("=", 2);
     if (rawValue !== undefined) {
+      if (!valueFlags.has(rawKey)) throw new Error(`--${rawKey} does not take a value`);
+      if (!rawValue) throw new Error(`--${rawKey} needs a value`);
       flags.set(rawKey, rawValue);
       continue;
     }

@@ -33,6 +33,10 @@ test("creates, lists, and force-cleans a generic worktree", () => {
     assert.match(git(["worktree", "list"], dir), /test-task/);
     assert.match(readFileSync(join(dir, ".git", "info", "exclude"), "utf8"), /\.worktrees\//);
     assert.match(run(process.execPath, [cli, "list"], dir), /test-task/);
+    assert.throws(
+      () => run(process.execPath, [cli, "cleanup", "test-task", "--force=false"], dir),
+      /--force does not take a value/,
+    );
 
     run(process.execPath, [cli, "cleanup", "--force", "test-task"], dir);
     assert.equal(existsSync(worktreePath), false);
