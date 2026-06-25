@@ -81,6 +81,7 @@ Hooks receive: WT_SLUG, WT_BRANCH, WT_PORT, WT_WORKTREE_PATH, WT_SOURCE_ROOT, WT
 
 // ── arg parsing ───────────────────────────────────────────────────────────────
 function parseCli(argv) {
+  const valueFlags = new Set(["base", "branch"]);
   const [command = "help", ...rest] = argv;
   const positionals = [];
   const flags = new Map();
@@ -95,13 +96,14 @@ function parseCli(argv) {
       flags.set(rawKey, rawValue);
       continue;
     }
-    const next = rest[index + 1];
-    if (next && !next.startsWith("--")) {
-      flags.set(rawKey, next);
-      index += 1;
-    } else {
+    if (!valueFlags.has(rawKey)) {
       flags.set(rawKey, true);
+      continue;
     }
+    const next = rest[index + 1];
+    if (!next || next.startsWith("--")) throw new Error(`--${rawKey} needs a value`);
+    flags.set(rawKey, next);
+    index += 1;
   }
   return { command, flags, positionals };
 }
@@ -531,7 +533,12 @@ async function createWorktree(repo, input, flags) {
   ensureExclude(repo.sourceRoot, `${repo.config.worktreeDir}/`);
   mkdirSync(repo.worktreeRoot, { recursive: true });
 
-  if (!existsSync(worktreePath)) {
+  if (existsSync(worktreePath)) {
+    const knownWorktree = parseWorktreeList(repo.sourceRoot).some(
+      (entry) => resolve(entry.path) === resolve(worktreePath),
+    );
+    if (!knownWorktree) throw new Error(`Path exists but is not a git worktree: ${worktreePath}`);
+  } else {
     const base = flags.get("base") ? String(flags.get("base")) : repo.config.base;
     const branchExists =
       tryRun("git", [
