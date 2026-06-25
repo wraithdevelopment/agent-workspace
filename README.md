@@ -7,7 +7,13 @@ No runtime deps. POSIX shell required.
 ## Install
 
 ```bash
-pnpm dlx github:wraithdevelopment/agent-workspace --help
+pnpm --package github:wraithdevelopment/agent-workspace dlx agent-wt help
+```
+
+As a Pi skill package:
+
+```bash
+pi install git:github.com/wraithdevelopment/agent-workspace
 ```
 
 Or after npm publish:
@@ -81,6 +87,10 @@ agent-wt list
 agent-wt start fix-auth-callback
 agent-wt cleanup fix-auth-callback --force
 ```
+
+## Agent Skill
+
+This repo ships an Agent Skills-compatible skill at `skills/agent-workspace/SKILL.md`, and exposes it via the `pi.skills` package manifest. Pi, Claude/Codex-style harnesses, or any Agent Skills-compatible coding agent can load it to learn the CLI workflow.
 
 ## Limits
 
